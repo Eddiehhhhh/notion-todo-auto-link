@@ -24,11 +24,11 @@ def get_date(item, field):
     date = item["properties"][field]["date"]
     return date["start"] if date else None
 
-def update_relation(page_id, field, related_id):
+def update_relation(page_id, related_id):
     url = f"https://api.notion.com/v1/pages/{page_id}"
     data = {
         "properties": {
-            field: {
+            "任务关联": {
                 "relation": [{"id": related_id}]
             }
         }
@@ -47,6 +47,6 @@ for a in a_items:
         b_date = get_date(b, "开始时间")
 
         if a_name == b_title and a_date == b_date:
-            update_relation(a["id"], "关联B", b["id"])
-            update_relation(b["id"], "关联A", a["id"])
+            update_relation(a["id"], b["id"])
+            update_relation(b["id"], a["id"])
             print("匹配成功:", a_name)
