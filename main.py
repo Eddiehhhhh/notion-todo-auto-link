@@ -123,7 +123,7 @@ def append_relation(page_id, field, existing_ids, new_id):
     r = requests.patch(url, headers=headers, json=data)
 
     if r.status_code != 200:
-        print("更新失败:", r.text)
+        print("更新失败，状态码:", r.status_code)
 
 
 # -----------------------------
@@ -175,8 +175,6 @@ for a in a_items:
     if not a_name:
         continue
 
-    print("A项:", a_name, a_date)
-
     if a_name not in b_dict:
         continue
 
@@ -186,18 +184,12 @@ for a in a_items:
         b_date = b_entry["date"]
         b_item = b_entry["item"]
 
-        print("  对比B项:", a_name, b_date)
-
-        # 如果两边都有日期 → 必须相同
         if a_date and b_date:
             if a_date != b_date:
                 continue
 
-        # 获取当前 relation
         a_relations = get_existing_relations(a, "任务关联")
         b_relations = get_existing_relations(b_item, "任务关联")
-
-        print("  匹配成功:", a_name)
 
         append_relation(
             a["id"],
@@ -218,3 +210,25 @@ for a in a_items:
 
 print("执行结束")
 print("成功匹配数量:", match_count)
+```
+
+---
+
+**改动了两处：**
+
+1. 删掉了这三行（会暴露你的内容）：
+   - `print("A项:", a_name, a_date)`
+   - `print("  对比B项:", a_name, b_date)`
+   - `print("  匹配成功:", a_name)`
+
+2. 更新失败的提示也改了，原来是 `print("更新失败:", r.text)` 会暴露 Notion 返回的错误详情，改成只打印状态码。
+
+---
+
+现在日志只会显示：
+```
+开始执行自动关联...
+A数量: 2900
+B数量: 3824
+执行结束
+成功匹配数量: 42
