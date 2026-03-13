@@ -2,7 +2,10 @@ name: Notion Auto Link
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 1 * * *'
+    - cron: '0 4 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 14 * * *'
   workflow_dispatch:
 
 jobs:
