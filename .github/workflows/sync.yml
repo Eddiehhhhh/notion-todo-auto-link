@@ -12,17 +12,24 @@ jobs:
   run:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # 强制 Node.js 24
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      DATABASE_A: ${{ secrets.DATABASE_A }}
+      DATABASE_B: ${{ secrets.DATABASE_B }}
 
-      - uses: actions/setup-python@v5
+    steps:
+      # 拉取仓库代码
+      - uses: actions/checkout@v5  # 升级到最新版本，支持 Node.js 24
+
+      # 安装 Python
+      - uses: actions/setup-python@v6  # 升级到最新版本
         with:
           python-version: '3.10'
 
+      # 安装依赖
+      - run: pip install --upgrade pip
       - run: pip install requests
 
+      # 运行你的脚本
       - run: python main.py
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          DATABASE_A: ${{ secrets.DATABASE_A }}
-          DATABASE_B: ${{ secrets.DATABASE_B }}
