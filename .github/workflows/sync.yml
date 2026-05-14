@@ -15,8 +15,8 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # 强制 Node.js 24
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-      DATABASE_A: ${{ secrets.DATABASE_A }}
-      DATABASE_B: ${{ secrets.DATABASE_B }}
+      DB_A: ${{ secrets.DB_A }}
+      DB_B: ${{ secrets.DB_B }}
 
     steps:
       # 拉取仓库代码
