@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo  # Python 3.9+
@@ -27,9 +28,21 @@ def query_database(database_id):
             payload["start_cursor"] = next_cursor
 
         r = requests.post(url, headers=headers, json=payload)
+
+        # 检查 API 是否返回了错误响应
+        if r.status_code != 200:
+            print(f"Notion API error: status={r.status_code}, body={r.text[:500]}")
+            break
+
         data = r.json()
+
+        # 检查响应结构合法性
+        if "results" not in data:
+            print(f"Notion API unexpected response: keys={list(data.keys())}")
+            break
+
         results.extend(data["results"])
-        has_more = data["has_more"]
+        has_more = data.get("has_more", False)
         next_cursor = data.get("next_cursor")
 
     return results
@@ -111,6 +124,14 @@ def main():
 
     print(f"任务中心(A): {len(a_items)} 条")
     print(f"任务(B): {len(b_items)} 条")
+
+    # 检查数据是否有效（防止 API 错误导致空数据）
+    if not a_items or not b_items:
+        if not a_items:
+            print("ERROR: 任务中心(A) 查询为空，可能是 Token 或数据库 ID 配置错误")
+        if not b_items:
+            print("ERROR: 任务(B) 查询为空，可能是 Token 或数据库 ID 配置错误")
+        sys.exit(1)
 
     # 构建 B 的索引: 标题 -> [{id, date, item}]
     b_dict = {}
